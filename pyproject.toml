@@ -10,11 +10,39 @@ requires-python = ">=3.12"
 dependencies = [
 ]
 
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-
 [tool.poetry]
 package-mode = false
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.16.1,<0.17.0)",
+    "mypy (>=2.3.0,<3.0.0)",
+    "pytest (>=9.1.1,<10.0.0)",
+    "pre-commit (>=4.6.1,<5.0.0)"
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # style errors
+    "F",   # likely bugs and unused imports
+    "I",   # import sorting
+    "UP",  # modern Python syntax
+    "B",   # common bug patterns
+    "SIM", # simplifications
+]
+ignore = ["E501"]  # Let the formatter handle line wrapping
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["E402"]
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+warn_unused_ignores = true
