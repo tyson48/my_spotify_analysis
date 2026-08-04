@@ -149,6 +149,7 @@ activemq-data/
 
 # Environments
 .env
+.spotify_tokens.json
 .envrc
 .venv
 env/
