@@ -73,3 +73,38 @@ Pass it in API requests as `Authorization: Bearer <access_token>`. To force a ne
 consent flow, call `get_access_token(force_login=True)`. To disconnect locally,
 delete `.spotify_tokens.json`; you can also revoke the app in your Spotify
 account settings.
+
+## Calling user endpoints
+
+``SpotifyClient`` contains the shared authenticated HTTP behavior, while
+``UsersAPI`` contains endpoints concerning the authorized account:
+
+```python
+from datetime import UTC, datetime, timedelta
+
+from spotify_lab.auth import SpotifyOAuth
+from spotify_lab.config import SpotifyConfig
+from spotify_lab.spotify import SpotifyClient, UsersAPI
+
+oauth = SpotifyOAuth(SpotifyConfig.from_env())
+client = SpotifyClient(oauth)
+users = UsersAPI(client)
+
+profile = users.profile()
+top_tracks = users.top_tracks(time_range="medium_term", limit=10)
+recent = users.recently_played(
+    limit=10,
+    after=datetime.now(UTC) - timedelta(days=7),
+)
+
+for track in top_tracks["items"]:
+    print(track["name"])
+```
+
+The `after` and `before` values for `recently_played()` accept Python datetimes.
+If a datetime has no timezone, it is interpreted as German local time using
+`Europe/Berlin` (including the appropriate CET or CEST offset).
+
+The configured default scopes support top items and recently played tracks.
+Add `user-read-private` or `user-read-email` only if you need the corresponding
+restricted profile fields, then run authorization again with `force_login=True`.
